@@ -1,0 +1,11 @@
+const String ammo = "assets/png/ammo.png";
+const String bilek = "assets/png/ayakbilek.png";
+const String ayakBilek = "assets/png/bilek.png";
+const String boyun = "assets/png/boyun.png";
+const String diz = "assets/png/diz.png";
+const String omuz = "assets/png/omuz.png";
+const String doktor1 = "asssets/png/doktor1.png;";
+const String doktor2 = "asssets/png/dokto2.png;";
+const String doktor3 = "asssets/png/doktor3.jpg;";
+const String logo = "assets/png/logo.jpg";
+const String doktor4 = "assets/png/images.jpg";
