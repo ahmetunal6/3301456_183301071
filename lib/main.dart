@@ -51,7 +51,7 @@ class _MyNavigationBarState extends State<MyNavigationBar> {
       const App_Setting()
     ];
   }
-
+  
   void onTabTapped(int index) {
     print(widget.userName);
     setState(() {

@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import '../constants/assets_constant.dart';
 
 class Programsdetail extends StatefulWidget {
-  const Programsdetail({Key? key}) : super(key: key);
+  const Programsdetail ({Key? key}) : super(key: key);
 
+  
   @override
   _ProgramsdetailState createState() => _ProgramsdetailState();
 }

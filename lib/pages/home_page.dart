@@ -1,16 +1,26 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/detail_pages/about_me.dart';
 import 'package:flutter_application_1/detail_pages/today_task.dart';
 import 'package:flutter_application_1/detail_pages/programs_detail.dart';
 import 'package:flutter_application_1/pages/injuries.dart';
+import 'package:flutter_application_1/pages/login_view.dart';
 import 'package:flutter_application_1/pages/programs.dart';
 import 'package:pie_chart/pie_chart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/assets_constant.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key, required String? this.userName}) : super(key: key);
+  
+   HomePage({Key? key, required String? this.userName}) : super(key: key);
   final String? userName;
-
+  
+  Future<String?> getUserToken() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getString('token').toString();
+  
+}
+final dio = Dio();
   @override
   Widget build(BuildContext context) {
     Map<String, double> dataMap = {
@@ -31,6 +41,46 @@ class HomePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          ElevatedButton(
+
+                onPressed: () async {
+                    var token=await getUserToken();
+                    
+                    
+                    try {
+                     
+                    dio.options.headers['Authorization'] = 'Token $token';
+                    var response = await dio.post('http://192.168.56.1:8000/api/account/logout');
+
+                    print(response.statusMessage);
+                  
+                    Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => LoginView()),
+                    (Route<dynamic> route) => false);
+                
+                 
+              
+ 
+                 
+    // Handle response here
+                  } catch (e) {
+                    print(e);
+                    // print("asdsadasdas");
+                    // Handle error here
+                  }
+
+                
+                  // Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //         builder: (context) => MyNavigationBar(
+                  //               userName: name.text,
+                  //             )));
+                },
+                child: const Text("çıkışyap"))
+          
+        ],
         elevation: 4,
         backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
@@ -272,42 +322,43 @@ class HomePage extends StatelessWidget {
               const SizedBox(
                 height: 25,
               ),
-              Container(
-                height: 200,
-                child: ListView.builder(
-                  itemCount: homeStateList.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
+           Container(
+              height: 200,
+              child: ListView.builder(
+                itemCount: homeStateList.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: GestureDetector(
+                      
+                    onDoubleTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: homeStateList[index]['route'],
+                        ),
+                      );
+                    },
+         
                       child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
                           color: const Color.fromARGB(255, 240, 235, 235),
                         ),
                         child: ListTile(
-                             onTap: () => {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                  builder: homeStateList[index]['route'],
-                ),
-                ),
-                                    
-                                },
-                                                    
-                                title: Center(
-                                child: Text(
-                                    homeStateList[index]['title'].toString())),
-                            leading:Icon(homeStateList[index]['icon'],color: Colors.black,),
-                            trailing: const Icon(
-                              Icons.chevron_right,
-                              color: Colors.black,
-                            )),
+                          title: Center(
+                              child: Text(homeStateList[index]['title'].toString())),
+                          leading:
+                              Icon(homeStateList[index]['icon'], color: Colors.black),
+                          trailing:
+                              const Icon(Icons.chevron_right, color: Colors.black),
+                        ),
                       ),
-                    );
-                  }, 
-                ),
+                    ),
+                  );
+                },
               ),
+            ),
 
    
             ],
@@ -318,7 +369,7 @@ class HomePage extends StatelessWidget {
   }
 }
 
-// ammmmoooooo
+
 
 class ChartData {
   ChartData(this.x, this.y, [this.color = Colors.red]);
