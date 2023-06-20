@@ -102,9 +102,10 @@ class SignUpPage extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
                   controller: _passwordController,
+                  obscureText: true,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
-                    labelText: 'Kullanıcı Adı',
+                    labelText: 'Şifre',
                   ),
                 ),
               ),

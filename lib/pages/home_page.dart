@@ -10,26 +10,26 @@ import 'package:pie_chart/pie_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/assets_constant.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   
    HomePage({Key? key, required String? this.userName}) : super(key: key);
   final String? userName;
-  
-  Future<String?> getUserToken() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  return prefs.getString('token').toString();
-  
-}
-final dio = Dio();
+
   @override
-  Widget build(BuildContext context) {
-    Map<String, double> dataMap = {
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+
+
+final dio = Dio();
+Map<String, double> dataMap = {
       "Flutter": 5,
       // "React": 3,
       // "Xamarin": 4,
       // "Ionic": 2,
     };
-
+  String username = '';
     List homeStateList = [
       {"id": 0, "title": "Günlük Görevler","icon":Icons.task,"route":(BuildContext context) => const Task()},
       {"id": 1, "title": "Programlarım","icon":Icons.note_add,"route":(BuildContext context) => const Programsdetail()},
@@ -38,8 +38,43 @@ final dio = Dio();
       {"id": 4, "title": "Hakkımızda","icon":Icons.question_mark,"route": (BuildContext context) => const Aboutme()},
    
     ];
+     Future<String?> getUserToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('token').toString();
+  }
+  Future<String?> getUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('id').toString();
+  }
 
+  void _fetchUsername() async {
+    try {
+      var token = await getUserToken();
+      var id = await getUserId();
+      // Kullanıcı adını API'den çekme işlemi
+      dio.options.headers['Authorization'] = 'Token $token';
+      var response = await dio.get('http://192.168.56.1:8000/api/account/login/$id');
+
+      setState(() {
+        username = response.data['username']; 
+        print(username);// API'den gelen kullanıcı adını güncelleme
+      });
+    } catch (error) {
+      print('Kullanıcı adını çekerken bir hata oluştu: $error');
+    }
+  }
+  void initState() {
+    super.initState();
+    _fetchUsername(); // Kullanıcı adını API'den çekme işlemi
+  }
+  @override
+  
+
+  Widget build(BuildContext context) {
+    
+    
     return Scaffold(
+
       appBar: AppBar(
         actions: [
           ElevatedButton(
@@ -100,7 +135,7 @@ final dio = Dio();
               width: 20,
             ),
             Text(
-              userName!,
+              username,
               style: const TextStyle(
                   color: Color.fromARGB(255, 39, 39, 39),
                   fontWeight: FontWeight.w400),
